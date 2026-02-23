@@ -21,7 +21,9 @@ jobs:
         run: npm install -g mystmd
 
       - name: Build site
-        run: myst build --html
+        run: |
+          export BASE_URL="/gcp-tutorial-aims"
+          myst build --html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
