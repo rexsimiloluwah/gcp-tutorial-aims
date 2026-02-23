@@ -58,6 +58,7 @@ project:
 site:
   title: AIMS GCP ML Tutorial
   template: book-theme
+  url: https://rexsimiloluwah.github.io/gcp-tutorial-aims
   options:
     folders: true 
     logo_text: AIMS GCP ML Tutorial
