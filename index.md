@@ -74,15 +74,15 @@ However, it should be generally helpful for:
 
 ### Option 1: Linear (Recommended for beginners)
 
-Start at Part 1 and work through sequentially.
+Start from Part 1 and work through sequentially.
 
 ### Option 2: Jump to What You Need
 
-- Need a quick-start guide to using GCP? → **Part 1**
-- Want to run ML experiments on a GPU VM? → **Part 2**
-- Want to learn how to use managed services? → **Part 3**
-- Need to understand costs before spending credits? → **Part 4**
-- Fighting out-of-memory (OOM) errors on GPUs? → **Appendix A**
+- Need a quick-start guide to using GCP? → **[Part 1](./part1-gcp-foundations/)**
+- Want to run ML experiments on a GPU VM? → **[Part 2](./part2-running-experiments-on-gcp-vms/)**
+- Want to learn how to use managed services like Vertex AI? → **[Part 3](./part3-vertex-ai/)**
+- Need to understand how to monitor costs to manage your GCP credits properly? → **[Part 4](./part4-cost-management/)**
+- Need to know how to choose a GPU for your experiment? → **[Appendix A](./appendix/)**
 
 ## 🫱🏿‍🫲🏾 Contributing
 
