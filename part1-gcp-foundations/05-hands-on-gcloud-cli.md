@@ -43,6 +43,17 @@ export AIMSUSERNAME="your_aims_username" # This is for AIMS students
 gcloud compute networks create ${AIMSUSERNAME}-vpc --subnet-mode=auto
 ```
 
+:::{note} For Windows Users
+The commands in this tutorial are written for `bash`. If you are using a Windows computer, we highly recommend installing Git Bash or Ubuntu via WSL (Windows Subsystem for Linux) so you can run these commands directly without modification.
+
+If you prefer to use your native Windows command shell, you must adapt how environment variables are set and retrieved for the commands/scripts in this tutorial. The Windows equivalent for the commands above would be:
+
+```{code-block} bash
+set AIMSUSERNAME=your_aims_username
+gcloud compute networks create %AIMSUSERNAME%-vpc --subnet-mode=auto
+```
+:::
+
 ### Step 2: Create a Firewall Rule for SSH 
 
 By default, all incoming traffic is blocked. This rule allows traffic on **Port 22**, which is required for SSH connections.
