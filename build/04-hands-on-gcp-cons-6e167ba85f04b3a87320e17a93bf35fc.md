@@ -2,7 +2,60 @@
 
 In this hands-on tutorial, you will create your first GPU-powered virtual machine using the GCP Console web interface.
 
-## Step 1: Navigate to Compute Engine on the [GCP Console](https://console.cloud.google.com)
+## Step 1: Create a Virtual Private Cloud (VPC) Network 
+
+Every virtual machine requires a network to function. A [Virtual Private Cloud (VPC)](https://docs.cloud.google.com/vpc/docs/vpc) is a secure, isolated private network hosted within Google Cloud. It acts as the virtual equivalent of a physical network in a traditional data center. Specifically, a VPC network does the following:
+
+- **Provides connectivity** for your Compute Engine virtual machine (VM) instances.
+- **Enables communication** between your VMs, other Google Cloud services, and the public internet.
+- **Acts as a secure boundary**, allowing you to control exactly what traffic can enter or leave your network using firewall rules.
+
+To ensure your VM has the correct network configuration and to prevent creation errors, we will manually create a VPC first.
+
+:::{note} Basic Cloud Networking Concepts
+
+Before diving into creating the VPC and virtual machine, let's clarify a few essential concepts that are key to cloud networking, as understanding these will ensure your VM is both secure and accessible:
+
+- **VPC:** The overarching network for your Google Cloud project. VPC networks, including their associated routes and firewall rules, are **global resources**. They are not associated with any particular region or zone.
+
+- **Subnet (Subnetwork):** A division of your VPC. Subnets are regional resources. When you create a VM, you attach it to a specific subnet, which assigns the VM its internal IP address from a defined range.
+
+- **Firewall Rules:** Security policies that control what traffic is allowed into (ingress) or out of (egress) your VPC. By default, VPC networks block all incoming traffic.
+
+- **Cloud NAT (Network Address Translation):** In enterprise environments, VMs are often kept fully private without external IP addresses for security. Cloud NAT allows these strictly private VMs to reach the internet to download software updates without exposing them to incoming internet traffic.
+
+- **Cloud Router:** Works alongside Cloud NAT to manage the dynamic routing of traffic between your private subnets and the outside world.
+
+For this specific tutorial, we will assign a temporary external IP directly to our VM so we can connect to it easily. Therefore, we do not need to configure Cloud NAT or Cloud Router here.
+:::
+
+1. Open the Navigation menu **(☰)** and go to **VPC network → VPC networks**.
+
+2. Click the **Create VPC Network** button
+
+3. **Name:** Enter `demo-vpc`, or whatever name you want.
+
+4. **Subnet creation mode:** Select **Automatic**. This instructs Google Cloud to automatically create a subnet with a predefined IP range in every available region.
+
+5. **Firewall rules:** Select the checkboxes for **allow-ssh**, **allow-icmp**, and **allow-custom**. Opening the SSH port (port 22) is absolutely required so you can log into your VM later.
+
+6. Click **Create** and wait for the status icon to show it is ready.
+
+```{figure} ./images/hands-on1-gcp-console-vpc-creation-a.png
+:alt: VPC Creation (A)
+:align: center
+
+Screenshot of VPC creation step A (configure VPC details and subnet creation mode)
+```
+
+```{figure} ./images/hands-on1-gcp-console-vpc-creation-b.png
+:alt: VPC Creation (B)
+:align: center
+
+Screenshot: VPC creation step B (configure firewall rules and click "create")
+```
+
+## Step 2: Navigate to Compute Engine on the [GCP Console](https://console.cloud.google.com)
 
 1. Open the **Navigation menu (☰)** in top-left
 2. Go to **Compute Engine → VM instances**
@@ -15,7 +68,7 @@ In this hands-on tutorial, you will create your first GPU-powered virtual machin
 Screenshot of "Create instance" page
 ```
 
-## Step 2: Create and Configure the Instance
+## Step 3: Create and Configure the Instance
 
 Click the **Create instance** button at the top of the Compute Engine dashboard. This will take you to the instance configuration page where you can configure the machine configuration, operating system (OS) and storage, networking, security, etc.
 
@@ -59,7 +112,12 @@ Screenshot: "OS and Storage" configuration window
 
 ### Networking, Security, and Advanced Settings 
 
-Before clicking the **Create** button on the bottom of the page to create your first VM instance on GCP, you can explore the additional configuration tabs on the sidebar:
+Before clicking the **Create** button on the bottom of the page to create your first VM instance on GCP, click on **Networking** in the sidebar to link your VM to the network you created in Step 2.
+
+1. Under the Firewall section, check **Allow HTTP traffic** and **Allow HTTPS traffic**. Checking these boxes opens ports 80 and 443, permitting inbound HTTP and HTTPS traffic to your VM. This is essential for exposing web-based applications hosted on your VM to the internet, allowing you to access tools like Jupyter Notebooks or web demos remotely via your browser.
+2. Under **Network interfaces**, click the dropdown.
+3. You can select the VPC network you just created i.e. `demo-vpc` for the network interface's **Network**.
+4. Ensure **External IPv4 address** is set to **Ephemeral**. This assigns a public IP address so you can reach the VM from the internet.
 
 ```{figure} ./images/hands-on1-gcp-console-networking.png
 :alt: Networking Configuration
@@ -67,8 +125,6 @@ Before clicking the **Create** button on the bottom of the page to create your f
 
 Screenshot: "Networking" configuration page
 ```
-
-- **Networking**: Under the Firewall section, check **Allow HTTP traffic** and **Allow HTTPS traffic**. This opens ports 80 and 443, which are necessary if you plan to run web-based notebooks (like Jupyter) or host a simple web demo.
 
 - **Security & Advanced**: Here you can manage SSH keys or add startup scripts. For most tasks, the default service account settings are sufficient.
 
@@ -78,7 +134,7 @@ At the top right, look for the **Equivalent Code** button. This opens a panel sh
 
 After completing the configuration steps above, you can then click the **Create** button to create your first VM instance in GCP using the Console 🥳. The creation process will take about ~1-2 minutes.
 
-## Step 3: The VM Instances Page 
+## Step 4: The VM Instances Page 
 
 Once you click **Create**, your VM will appear on the list of VMs.
 
@@ -114,7 +170,7 @@ Once finished, verify the setup by running `pwd` to see your home directory and 
 Screenshot: SSH browser terminal showing the output of the `pwd` command and the `nvidia-smi` command
 ```
 
-## Step 4: Stopping or Deleting your VM Istance
+## Step 5: Stopping or Deleting your VM Istance
 
 As you may have noticed, the monthly estimate for keeping a this VM you just created running 24/7 is approximately $200 (at an hourly rate of about $0.35 for an N1 machine with a T4 GPU). This is quite a lot of money to lose.
 
@@ -128,7 +184,7 @@ To manage your budget, you must proactively manage the state of your VM from the
 :::{important}
 - **Stopping a VM** is like turning off your laptop. Google stops charging you for the GPU and CPU usage. However, you will still incur a small monthly charge for the **Disk storage** (the "Balanced Persistent Disk") because Google must keep your data saved so it's there when you "Turn on" the VM again.
 
-- **Deleting a VM** wipes the instance and its disk completely. You stop paying for everything. This is the best option once you have finished an assignment and have downloaded your results. **Note:** Once deleted, your code and data cannot be recovered unless you have backed them up elsewhere.
+- **Deleting a VM** wipes the instance and its disk completely. You stop paying for everything. This is the best option once you have finished an experiment and have downloaded your results. **Note:** Once deleted, your code and data cannot be recovered unless you have backed them up elsewhere.
 :::
 
 ---
