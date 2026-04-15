@@ -113,7 +113,7 @@ gcloud compute instances create ${VM_NAME} \
     --zone=${ZONE} \
     --machine-type=g2-standard-4 \
     --accelerator="type=nvidia-l4,count=1" \
-    --image-family=common-cu128-ubuntu-2204-nvidia-570 \
+    --image-family=common-cu129-ubuntu-2204-nvidia-580 \
     --image-project=deeplearning-platform-release \
     --maintenance-policy=TERMINATE \
     --network=${AIMSUSERNAME}-vpc \
